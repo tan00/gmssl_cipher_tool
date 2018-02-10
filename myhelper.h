@@ -8,7 +8,7 @@
 #ifdef WIN32
 #include <windows.h>
 #define msleep(time) Sleep(time)
-#elif
+#else
 #include <time.h>
 #define msleep(time) sleep((time)*1000)
 #endif

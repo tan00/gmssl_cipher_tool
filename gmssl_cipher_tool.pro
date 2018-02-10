@@ -48,3 +48,8 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/D
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/liblibcryptod.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
+
+unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib64/ -lcrypto
+
+INCLUDEPATH += $$PWD/../../../../../usr/local/include/openssl
+DEPENDPATH += $$PWD/../../../../../usr/local/include/openssl

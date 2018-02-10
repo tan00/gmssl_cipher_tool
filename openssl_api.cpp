@@ -9,6 +9,8 @@
 
 #include <QDebug>
 
+typedef unsigned char BYTE;
+
 OPENSSL_API::OPENSSL_API()
 {
 
@@ -162,6 +164,7 @@ static const EVP_CIPHER *  getalg(int alg, int mode , int keylen)
 
 int OPENSSL_API::enc(QString keyHex, QString ivHex, int alg, int mode, QString inHex, QString& outHex)
 {
+
     QByteArray QbyteKey  = myHelper::hexStrToByteArray(keyHex);
     QByteArray QbyteIV  =  myHelper::hexStrToByteArray(ivHex);
     QByteArray QbyteIn  =  myHelper::hexStrToByteArray(inHex);
@@ -171,6 +174,9 @@ int OPENSSL_API::enc(QString keyHex, QString ivHex, int alg, int mode, QString i
     int inlen = QbyteIn.length();
     char* in = (char*)QbyteIn.data();
     char* out = new char[inlen+16];
+
+    int offset = 0;
+    int outlen = 0;
     
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
 
@@ -204,10 +210,6 @@ int OPENSSL_API::enc(QString keyHex, QString ivHex, int alg, int mode, QString i
     if (ret != 1) goto errret;
 
     EVP_CIPHER_CTX_set_padding(ctx,0);//no padding
-
-    int offset = 0;
-    int outlen = 0;
-
 
     while( offset<inlen ){
         int _len = 0;
@@ -243,6 +245,9 @@ int OPENSSL_API::dec(QString keyHex, QString ivHex, int alg, int mode, QString i
     QByteArray QbyteKey  = myHelper::hexStrToByteArray(keyHex);
     QByteArray QbyteIV  =  myHelper::hexStrToByteArray(ivHex);
     QByteArray QbyteIn  =  myHelper::hexStrToByteArray(inHex);
+
+    int offset = 0;
+    int outlen = 0;
 
     int ret = 0;
     int block_size = 16;
@@ -283,8 +288,7 @@ int OPENSSL_API::dec(QString keyHex, QString ivHex, int alg, int mode, QString i
 
     EVP_CIPHER_CTX_set_padding(ctx,0);//no padding
 
-    int offset = 0;
-    int outlen = 0;
+
 
 #if 1
     while( offset<inlen ){
@@ -298,14 +302,14 @@ int OPENSSL_API::dec(QString keyHex, QString ivHex, int alg, int mode, QString i
     }
 #endif
 
-#if 0
-    int _len = 0;
-    ret = EVP_DecryptUpdate(ctx, (unsigned char*)out , &_len,
-                            (unsigned char*)in , inlen);
-    if( ret != 1 )
-        goto errret;
-    offset += _len;
-#endif
+//#if 0
+//    int _len = 0;
+//    ret = EVP_DecryptUpdate(ctx, (unsigned char*)out , &_len,
+//                            (unsigned char*)in , inlen);
+//    if( ret != 1 )
+//        goto errret;
+//    offset += _len;
+//#endif
 
     ret = EVP_DecryptFinal(ctx, (unsigned char*)out + offset, &outlen);
     if (ret != 1)
