@@ -244,326 +244,213 @@
        <layout class="QGridLayout" name="gridLayout_15">
         <item row="0" column="0">
          <widget class="QWidget" name="widget_rsa" native="true">
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>83</y>
-             <width>770</width>
-             <height>86</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="formLayout_5">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_17">
-              <property name="text">
-               <string> pk</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QTextEdit" name="textEdit_pk"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>361</y>
-             <width>770</width>
-             <height>86</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="formLayout_6">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_20">
-              <property name="text">
-               <string>out</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QTextEdit" name="textEdit_rsa_out"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_gen">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>454</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string> 生成RSA</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_pkenc">
-           <property name="geometry">
-            <rect>
-             <x>142</x>
-             <y>454</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>公钥加密</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_vkdec">
-           <property name="geometry">
-            <rect>
-             <x>272</x>
-             <y>454</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>私钥解密</string>
-           </property>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_fillmod">
-           <property name="geometry">
-            <rect>
-             <x>788</x>
-             <y>11</y>
-             <width>101</width>
-             <height>130</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>填充模式</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <widget class="QRadioButton" name="radioButton_nopading">
-              <property name="text">
-               <string>NULL</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_pkcs1">
-              <property name="text">
-               <string>PKCS1</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_oaep">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>OAEP</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_topem">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>490</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>der-&gt;pem</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_toder">
-           <property name="geometry">
-            <rect>
-             <x>142</x>
-             <y>490</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>pem-&gt;der</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_vkenc">
-           <property name="geometry">
-            <rect>
-             <x>399</x>
-             <y>454</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>私钥加密</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="pushButton_rsa_pkdec">
-           <property name="geometry">
-            <rect>
-             <x>530</x>
-             <y>454</y>
-             <width>93</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>公钥解密</string>
-           </property>
-          </widget>
-          <widget class="QWidget" name="">
-           <layout class="QFormLayout" name="formLayout_3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>bits</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_bits">
-              <property name="text">
-               <string>1024</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>399</x>
-             <y>11</y>
-             <width>381</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_7">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>m   </string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_m"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>47</y>
-             <width>254</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="formLayout_10">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>e   </string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_e">
-              <property name="text">
-               <string>65537</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>399</x>
-             <y>47</y>
-             <width>381</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_13">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>d   </string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_d"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>176</y>
-             <width>770</width>
-             <height>85</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="formLayout_7">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_18">
-              <property name="text">
-               <string> vk</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QTextEdit" name="textEdit_vk"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="">
-           <property name="geometry">
-            <rect>
-             <x>11</x>
-             <y>268</y>
-             <width>770</width>
-             <height>86</height>
-            </rect>
-           </property>
-           <layout class="QFormLayout" name="formLayout_8">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_19">
-              <property name="text">
-               <string> in</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QTextEdit" name="textEdit_rsa_in"/>
-            </item>
-           </layout>
-          </widget>
+          <layout class="QGridLayout" name="gridLayout_14">
+           <item row="0" column="0" colspan="2">
+            <layout class="QFormLayout" name="formLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>bits</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEdit_bits">
+               <property name="text">
+                <string>1024</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="3" colspan="2">
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>m   </string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEdit_m"/>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="5" rowspan="3">
+            <widget class="QGroupBox" name="groupBox_fillmod">
+             <property name="title">
+              <string>填充模式</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QRadioButton" name="radioButton_nopading">
+                <property name="text">
+                 <string>NULL</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_pkcs1">
+                <property name="text">
+                 <string>PKCS1</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_oaep">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>OAEP</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <layout class="QFormLayout" name="formLayout_10">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>e   </string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEdit_e">
+               <property name="text">
+                <string>65537</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="3" colspan="2">
+            <layout class="QGridLayout" name="gridLayout_13">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>d   </string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEdit_d"/>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0" colspan="5">
+            <layout class="QFormLayout" name="formLayout_5">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string> pk</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QTextEdit" name="textEdit_pk"/>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0" colspan="5">
+            <layout class="QFormLayout" name="formLayout_7">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string> vk</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QTextEdit" name="textEdit_vk"/>
+             </item>
+            </layout>
+           </item>
+           <item row="4" column="0" colspan="5">
+            <layout class="QFormLayout" name="formLayout_8">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string> in</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QTextEdit" name="textEdit_rsa_in"/>
+             </item>
+            </layout>
+           </item>
+           <item row="5" column="0" colspan="5">
+            <layout class="QFormLayout" name="formLayout_6">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>out</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QTextEdit" name="textEdit_rsa_out"/>
+             </item>
+            </layout>
+           </item>
+           <item row="6" column="0">
+            <widget class="QPushButton" name="pushButton_rsa_gen">
+             <property name="text">
+              <string> 生成RSA</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QPushButton" name="pushButton_rsa_pkenc">
+             <property name="text">
+              <string>公钥加密</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QPushButton" name="pushButton_rsa_vkdec">
+             <property name="text">
+              <string>私钥解密</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QPushButton" name="pushButton_rsa_vkenc">
+             <property name="text">
+              <string>私钥加密</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="4">
+            <widget class="QPushButton" name="pushButton_rsa_pkdec">
+             <property name="text">
+              <string>公钥解密</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QPushButton" name="pushButton_rsa_topem">
+             <property name="text">
+              <string>der-&gt;pem</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QPushButton" name="pushButton_rsa_toder">
+             <property name="text">
+              <string>pem-&gt;der</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
-       <zorder>textEdit_pk</zorder>
-       <zorder>label_17</zorder>
-       <zorder>textEdit_vk</zorder>
-       <zorder>label_18</zorder>
-       <zorder>textEdit_rsa_in</zorder>
-       <zorder>label_19</zorder>
-       <zorder>label_20</zorder>
-       <zorder>textEdit_rsa_out</zorder>
-       <zorder>textEdit_vk</zorder>
-       <zorder>textEdit_rsa_in</zorder>
-       <zorder>widget_rsa</zorder>
       </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">

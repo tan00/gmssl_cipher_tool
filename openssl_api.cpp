@@ -393,7 +393,7 @@ int OPENSSL_API::genrsa(QString bits, QString e, QString &outPKDer, QString &out
 
 int OPENSSL_API::rsa_pkenc(QString derpk, QString in, int padding, QString &out)
 {
-    RSA * rsa = RSA_new();
+    RSA * rsa = NULL;
     int ret = 0;
     int flen = 0;
     QByteArray indata = QByteArray::fromHex( in.toUtf8() );
@@ -401,10 +401,9 @@ int OPENSSL_API::rsa_pkenc(QString derpk, QString in, int padding, QString &out)
     QByteArray outdata;
 
     QByteArray pk =  QByteArray::fromHex(derpk.toUtf8());
-    unsigned char *t =  (unsigned char*)pk.data() ;
-    const unsigned char **t2 = NULL;
-    ret = d2i_RSAPublicKey(&rsa,t2, pk.length());
-    if( ret != 1 ){
+    const unsigned char *t =  (const unsigned char*)pk.data() ;
+    rsa = d2i_RSAPublicKey(NULL,&t, pk.length());
+    if( rsa == NULL ){
         goto errret;
     }
 
@@ -425,8 +424,8 @@ int OPENSSL_API::rsa_pkenc(QString derpk, QString in, int padding, QString &out)
     }
 
     to = new unsigned char[flen+12];
-    ret = RSA_public_encrypt(flen, (unsigned char*)indata.data(),to,rsa,padding);
-    if(ret != 1){
+    ret = RSA_public_encrypt(indata.length(), (unsigned char*)indata.data(),to,rsa,padding);
+    if(ret != RSA_size(rsa) ){
         goto errret;
     }
 
@@ -448,7 +447,143 @@ errret:
 
 int OPENSSL_API::rsa_vkdec(QString dervk, QString in, int padding, QString &out)
 {
+    RSA * rsa = NULL;
+    int ret = 0;
+    int flen = 0;
+    QByteArray indata = QByteArray::fromHex( in.toUtf8() );
+    unsigned char *to = NULL;
+    QByteArray outdata;
 
+    QByteArray vk =  QByteArray::fromHex(dervk.toUtf8());
+    const unsigned char *t =  (const unsigned char*)vk.data() ;
+    rsa = d2i_RSAPrivateKey(NULL,&t, vk.length());
+    if( rsa == NULL ){
+        goto errret;
+    }
+
+    flen = RSA_size(rsa);//模长
+    if( indata.length() != flen ){
+        goto errret;
+    }
+
+    to = new unsigned char[flen+12];
+    ret = RSA_private_decrypt(flen, (unsigned char*)indata.data(),to,rsa,padding);
+    if(ret <=0  ){
+        goto errret;
+    }
+
+    outdata.append((char*)to,ret);
+    out.append( outdata.toHex() );
+
+    RSA_free(rsa);
+    delete[] to;
+    return 0;
+
+
+errret:
+    RSA_free(rsa);
+    if( to ){
+        delete[] to;
+    }
+    return -1;
+}
+
+
+int OPENSSL_API::rsa_vkenc(QString dervk, QString in, int padding, QString &out)
+{
+    RSA * rsa = NULL;
+    int ret = 0;
+    int flen = 0;
+    QByteArray indata = QByteArray::fromHex( in.toUtf8() );
+    unsigned char *to = NULL;
+    QByteArray outdata;
+
+    QByteArray vk =  QByteArray::fromHex(dervk.toUtf8());
+    const unsigned char *t =  (const unsigned char*)vk.data() ;
+    rsa = d2i_RSAPrivateKey(NULL,&t, vk.length());
+    if( rsa == NULL ){
+        goto errret;
+    }
+
+    flen = RSA_size(rsa);//模长
+    switch(padding)
+    {
+    case RSA_PKCS1_PADDING:
+    case RSA_SSLV23_PADDING:
+        flen -= 11;break;
+    case RSA_NO_PADDING:
+        break;
+    case RSA_X931_PADDING:
+        flen -= 2;break;
+    }
+
+    if( indata.length() > flen ){
+        goto errret;
+    }
+
+    to = new unsigned char[flen+12];
+    ret = RSA_private_encrypt(indata.length(), (unsigned char*)indata.data(),to,rsa,padding);
+    if( ret !=  RSA_size(rsa)){
+        goto errret;
+    }
+
+    outdata.append((char*)to,ret);
+    out.append( outdata.toHex() );
+
+    RSA_free(rsa);
+    delete[] to;
+    return 0;
+
+
+errret:
+    RSA_free(rsa);
+    if( to ){
+        delete[] to;
+    }
+    return -1;
+}
+
+int OPENSSL_API::rsa_pkdec(QString derpk, QString in, int padding, QString &out)
+{
+    RSA * rsa = NULL;
+    int ret = 0;
+    int flen = 0;
+    QByteArray indata = QByteArray::fromHex( in.toUtf8() );
+    unsigned char *to = NULL;
+    QByteArray outdata;
+
+    QByteArray pk =  QByteArray::fromHex(derpk.toUtf8());
+    const unsigned char *t =  (const unsigned char*)pk.data() ;
+    rsa = d2i_RSAPublicKey(NULL,&t, pk.length());
+    if( rsa == NULL ){
+        goto errret;
+    }
+
+    flen = RSA_size(rsa);//模长
+    if( indata.length() != flen ){
+        goto errret;
+    }
+
+    to = new unsigned char[flen+12];
+    ret = RSA_public_decrypt(indata.length(), (unsigned char*)indata.data(),to,rsa,padding);
+    if(ret <=0  ){
+        goto errret;
+    }
+
+    outdata.append((char*)to,ret );
+    out.append( outdata.toHex() );
+
+    RSA_free(rsa);
+    delete[] to;
+    return 0;
+
+
+errret:
+    RSA_free(rsa);
+    if( to ){
+        delete[] to;
+    }
+    return -1;
 }
 
 

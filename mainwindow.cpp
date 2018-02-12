@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->radioButton_ecb->setChecked(true);
     ui->radioButton_des->setChecked(true);
 
+    ui->radioButton_pkcs1->setChecked(true);
+
     WaringLabel = new QLabel;
     PosLabel = new QLabel;
     SelLabel = new QLabel;
@@ -502,21 +504,97 @@ void MainWindow::on_pushButton_rsa_pkenc_clicked()
     if( ret <0 ){
         WaringLabel->setText("encrypt error");
     }
-    ui->textEdit_rsa_out->setText(out);
+    ui->textEdit_rsa_out->setText(out.toUpper());
 
 }
 
 void MainWindow::on_pushButton_rsa_vkdec_clicked()
 {
+    QString dervk;
+    QString in;
+    QString out;
+    int padding;
+    int ret = 0;
+
+    const int  RSA_PKCS1_PADDING      = 1;
+    const int  RSA_SSLV23_PADDING     = 2;
+    const int  RSA_NO_PADDING         = 3;
+    const int  RSA_PKCS1_OAEP_PADDING = 4;
+    const int  RSA_X931_PADDING       = 5;
+
+    dervk = ui->textEdit_vk->toPlainText();
+    in    = ui->textEdit_rsa_in->toPlainText();
+
+    if( ui->radioButton_pkcs1->isChecked() )
+         padding = RSA_PKCS1_PADDING;
+    else if( ui->radioButton_nopading->isChecked() )
+         padding = RSA_NO_PADDING;
+
+
+    ret = OPENSSL_API::rsa_vkdec(dervk,in,padding,out);
+    if( ret <0 ){
+        WaringLabel->setText("decrypt error");
+    }
+    ui->textEdit_rsa_out->setText(out.toUpper());
 
 }
 
 void MainWindow::on_pushButton_rsa_vkenc_clicked()
 {
+    QString dervk;
+    QString in;
+    QString out;
+    int padding;
+    int ret = 0;
 
+    const int  RSA_PKCS1_PADDING      = 1;
+    const int  RSA_SSLV23_PADDING     = 2;
+    const int  RSA_NO_PADDING         = 3;
+    const int  RSA_PKCS1_OAEP_PADDING = 4;
+    const int  RSA_X931_PADDING       = 5;
+
+    dervk = ui->textEdit_vk->toPlainText();
+    in    = ui->textEdit_rsa_in->toPlainText();
+
+    if( ui->radioButton_pkcs1->isChecked() )
+         padding = RSA_PKCS1_PADDING;
+    else if( ui->radioButton_nopading->isChecked() )
+         padding = RSA_NO_PADDING;
+
+
+    ret = OPENSSL_API::rsa_vkenc(dervk,in,padding,out);
+    if( ret <0 ){
+        WaringLabel->setText("encrypt error");
+    }
+    ui->textEdit_rsa_out->setText(out.toUpper());
 }
 
 void MainWindow::on_pushButton_rsa_pkdec_clicked()
 {
+    QString derpk;
+    QString in;
+    QString out;
+    int padding;
+    int ret = 0;
+
+    const int  RSA_PKCS1_PADDING      = 1;
+    const int  RSA_SSLV23_PADDING     = 2;
+    const int  RSA_NO_PADDING         = 3;
+    const int  RSA_PKCS1_OAEP_PADDING = 4;
+    const int  RSA_X931_PADDING       = 5;
+
+    derpk = ui->textEdit_pk->toPlainText();
+    in    = ui->textEdit_rsa_in->toPlainText();
+
+    if( ui->radioButton_nopading->isChecked() )
+         padding = RSA_NO_PADDING;
+    else if( ui->radioButton_pkcs1->isChecked() )
+         padding = RSA_PKCS1_PADDING;
+
+    ret = OPENSSL_API::rsa_pkdec(derpk,in,padding,out);
+    if( ret <0 ){
+        WaringLabel->setText("decrypt error");
+    }
+    ui->textEdit_rsa_out->setText(out.toUpper());
 
 }
