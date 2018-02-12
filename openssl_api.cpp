@@ -355,6 +355,9 @@ int OPENSSL_API::genrsa(QString bits, QString e, QString &outPKDer, QString &out
     QByteArray bytepk;
     QByteArray bytevk;
 
+    unsigned char *pk = NULL;
+    unsigned char *vk = NULL;
+
     BN_dec2bn(&pBN, e.toStdString().c_str() );
 
     if ( 1 != RSA_generate_key_ex(rsakey,ibits,pBN, NULL) ){
@@ -365,8 +368,7 @@ int OPENSSL_API::genrsa(QString bits, QString e, QString &outPKDer, QString &out
     }
     EVP_PKEY_set1_RSA(pkey,rsakey);
 
-    unsigned char *pk = NULL;
-    unsigned char *vk = NULL;
+
     int pklen = i2d_PublicKey(pkey, &pk);
     int vklen = i2d_PrivateKey(pkey,&vk);
 
@@ -378,12 +380,75 @@ int OPENSSL_API::genrsa(QString bits, QString e, QString &outPKDer, QString &out
     outVKDer.clear();
     outVKDer.append( bytevk.toHex() );
 
+#ifndef WIN32  //在win10下, debug版本 此处导致崩溃,但没有此处会有内存泄露?
     free(pk);
     free(vk);
+#endif
+
     BN_free(pBN);
     RSA_free(rsakey);
     EVP_PKEY_free(pkey);
     return 0;
+}
+
+int OPENSSL_API::rsa_pkenc(QString derpk, QString in, int padding, QString &out)
+{
+    RSA * rsa = RSA_new();
+    int ret = 0;
+    int flen = 0;
+    QByteArray indata = QByteArray::fromHex( in.toUtf8() );
+    unsigned char *to = NULL;
+    QByteArray outdata;
+
+    QByteArray pk =  QByteArray::fromHex(derpk.toUtf8());
+    unsigned char *t =  (unsigned char*)pk.data() ;
+    const unsigned char **t2 = NULL;
+    ret = d2i_RSAPublicKey(&rsa,t2, pk.length());
+    if( ret != 1 ){
+        goto errret;
+    }
+
+    flen = RSA_size(rsa);//模长
+    switch(padding)
+    {
+    case RSA_PKCS1_PADDING:
+    case RSA_SSLV23_PADDING:
+        flen -= 11;break;
+    case RSA_NO_PADDING:
+        break;
+    case RSA_X931_PADDING:
+        flen -= 2;break;
+    }
+
+    if( indata.length() > flen ){
+        goto errret;
+    }
+
+    to = new unsigned char[flen+12];
+    ret = RSA_public_encrypt(flen, (unsigned char*)indata.data(),to,rsa,padding);
+    if(ret != 1){
+        goto errret;
+    }
+
+    outdata.append((char*)to,RSA_size(rsa));
+    out.append( outdata.toHex() );
+
+    RSA_free(rsa);
+    delete[] to;
+    return 0;
+
+
+errret:
+    RSA_free(rsa);
+    if( to ){
+        delete[] to;
+    }
+    return -1;
+}
+
+int OPENSSL_API::rsa_vkdec(QString dervk, QString in, int padding, QString &out)
+{
+
 }
 
 

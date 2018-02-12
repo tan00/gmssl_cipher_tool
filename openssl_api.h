@@ -21,6 +21,10 @@ public:
     static int dec(QString keyHex, QString ivHex, int alg , int mode ,QString inHex , QString& outHex);
 
     static int genrsa(QString bits, QString e, QString& outPKDer, QString& outVKDer );
+    static int rsa_pkenc(QString derpk, QString in, int padding,  QString& out);
+    static int rsa_vkdec(QString dervk, QString in, int padding,  QString& out);
+    static int rsa_vkenc(QString dervk, QString in, int padding,  QString& out);
+    static int rsa_pkdec(QString derpk, QString in, int padding,  QString& out);
 
 };
 

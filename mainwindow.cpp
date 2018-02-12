@@ -456,9 +456,10 @@ void MainWindow::on_textEdit_char_out_selectionChanged()
     int len = cur.selectionEnd() - cur.selectionStart();
     SelLabel->setText( QString("Sel:%1").arg(len) );
 }
+///////////////////字符处理  end///////////////////////
 
 
-
+///////////////////rsa  ///////////////////////
 void MainWindow::on_pushButton_rsa_gen_clicked()
 {
     QString bits = ui->lineEdit_bits->text();
@@ -467,4 +468,55 @@ void MainWindow::on_pushButton_rsa_gen_clicked()
     QString derpk;
     QString dervk;
     OPENSSL_API::genrsa(bits,e,derpk,dervk);
+
+    ui->textEdit_pk->setText(derpk.toUpper());
+    ui->textEdit_vk->setText(dervk.toUpper());
+
+}
+
+
+
+void MainWindow::on_pushButton_rsa_pkenc_clicked()
+{
+    QString derpk;
+    QString in;
+    QString out;
+    int padding;
+    int ret = 0;
+
+    const int  RSA_PKCS1_PADDING      = 1;
+    const int  RSA_SSLV23_PADDING     = 2;
+    const int  RSA_NO_PADDING         = 3;
+    const int  RSA_PKCS1_OAEP_PADDING = 4;
+    const int  RSA_X931_PADDING       = 5;
+
+    derpk = ui->textEdit_pk->toPlainText();
+    in    = ui->textEdit_rsa_in->toPlainText();
+
+    if( ui->radioButton_nopading->isChecked() )
+         padding = RSA_NO_PADDING;
+    else if( ui->radioButton_pkcs1->isChecked() )
+         padding = RSA_PKCS1_PADDING;
+
+    ret = OPENSSL_API::rsa_pkenc(derpk,in,padding,out);
+    if( ret <0 ){
+        WaringLabel->setText("encrypt error");
+    }
+    ui->textEdit_rsa_out->setText(out);
+
+}
+
+void MainWindow::on_pushButton_rsa_vkdec_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_rsa_vkenc_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_rsa_pkdec_clicked()
+{
+
 }

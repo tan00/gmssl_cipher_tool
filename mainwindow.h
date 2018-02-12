@@ -77,7 +77,16 @@ private slots:
 
     void on_tabWidget_tabBarClicked(int index);
 
+
     void on_pushButton_rsa_gen_clicked();
+
+    void on_pushButton_rsa_pkenc_clicked();
+
+    void on_pushButton_rsa_vkdec_clicked();
+
+    void on_pushButton_rsa_vkenc_clicked();
+
+    void on_pushButton_rsa_pkdec_clicked();
 
 private:
     Ui::MainWindow *ui;
