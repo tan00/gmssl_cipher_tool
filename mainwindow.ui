@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>969</width>
-    <height>672</height>
+    <height>683</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -244,7 +244,7 @@
        <layout class="QGridLayout" name="gridLayout_15">
         <item row="0" column="0">
          <widget class="QWidget" name="widget_rsa" native="true">
-          <layout class="QGridLayout" name="gridLayout_14">
+          <layout class="QGridLayout" name="gridLayout_21">
            <item row="0" column="0" colspan="2">
             <layout class="QFormLayout" name="formLayout_3">
              <item row="0" column="0">
@@ -263,7 +263,7 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="3" colspan="2">
+           <item row="0" column="2">
             <layout class="QGridLayout" name="gridLayout_7">
              <item row="0" column="0">
               <widget class="QLabel" name="label_9">
@@ -277,7 +277,7 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="5" rowspan="3">
+           <item row="0" column="3" rowspan="3">
             <widget class="QGroupBox" name="groupBox_fillmod">
              <property name="title">
               <string>填充模式</string>
@@ -328,7 +328,7 @@
              </item>
             </layout>
            </item>
-           <item row="1" column="3" colspan="2">
+           <item row="1" column="2">
             <layout class="QGridLayout" name="gridLayout_13">
              <item row="0" column="0">
               <widget class="QLabel" name="label_10">
@@ -342,7 +342,7 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="0" colspan="5">
+           <item row="2" column="0" colspan="3">
             <layout class="QFormLayout" name="formLayout_5">
              <item row="0" column="0">
               <widget class="QLabel" name="label_17">
@@ -356,7 +356,7 @@
              </item>
             </layout>
            </item>
-           <item row="3" column="0" colspan="5">
+           <item row="3" column="0" colspan="3">
             <layout class="QFormLayout" name="formLayout_7">
              <item row="0" column="0">
               <widget class="QLabel" name="label_18">
@@ -370,7 +370,7 @@
              </item>
             </layout>
            </item>
-           <item row="4" column="0" colspan="5">
+           <item row="4" column="0" colspan="3">
             <layout class="QFormLayout" name="formLayout_8">
              <item row="0" column="0">
               <widget class="QLabel" name="label_19">
@@ -384,7 +384,7 @@
              </item>
             </layout>
            </item>
-           <item row="5" column="0" colspan="5">
+           <item row="5" column="0" colspan="3">
             <layout class="QFormLayout" name="formLayout_6">
              <item row="0" column="0">
               <widget class="QLabel" name="label_20">
@@ -399,53 +399,70 @@
             </layout>
            </item>
            <item row="6" column="0">
-            <widget class="QPushButton" name="pushButton_rsa_gen">
-             <property name="text">
-              <string> 生成RSA</string>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-            </widget>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>279</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
-           <item row="6" column="1">
-            <widget class="QPushButton" name="pushButton_rsa_pkenc">
-             <property name="text">
-              <string>公钥加密</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="2">
-            <widget class="QPushButton" name="pushButton_rsa_vkdec">
-             <property name="text">
-              <string>私钥解密</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="3">
-            <widget class="QPushButton" name="pushButton_rsa_vkenc">
-             <property name="text">
-              <string>私钥加密</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="4">
-            <widget class="QPushButton" name="pushButton_rsa_pkdec">
-             <property name="text">
-              <string>公钥解密</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QPushButton" name="pushButton_rsa_topem">
-             <property name="text">
-              <string>der-&gt;pem</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QPushButton" name="pushButton_rsa_toder">
-             <property name="text">
-              <string>pem-&gt;der</string>
-             </property>
-            </widget>
+           <item row="6" column="1" colspan="2">
+            <layout class="QGridLayout" name="gridLayout_14">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="pushButton_rsa_gen">
+               <property name="text">
+                <string> 生成RSA</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="pushButton_rsa_pkenc">
+               <property name="text">
+                <string>公钥加密</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="pushButton_rsa_vkdec">
+               <property name="text">
+                <string>私钥解密</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QPushButton" name="pushButton_rsa_vkenc">
+               <property name="text">
+                <string>私钥加密</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QPushButton" name="pushButton_rsa_pkdec">
+               <property name="text">
+                <string>公钥解密</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="pushButton_rsa_topem">
+               <property name="text">
+                <string>der-&gt;pem</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QPushButton" name="pushButton_rsa_toder">
+               <property name="text">
+                <string>pem-&gt;der</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
@@ -456,11 +473,284 @@
        <attribute name="title">
         <string>SM2</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_19">
+        <item row="0" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_40">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>  x</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_x"/>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2" rowspan="5">
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>模式选择</string>
+          </property>
+          <widget class="QCheckBox" name="checkBox_interHash">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>30</y>
+             <width>107</width>
+             <height>24</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>内部摘要</string>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_39">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_37">
+            <property name="text">
+             <string>  y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_y"/>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_38">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_38">
+            <property name="text">
+             <string>  d</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_d_2"/>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_37">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_39">
+            <property name="text">
+             <string>uid</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_uid"/>
+          </item>
+         </layout>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <layout class="QFormLayout" name="formLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_41">
+            <property name="text">
+             <string> in</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QTextEdit" name="textEdit_sm2_in"/>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_20">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_40">
+            <property name="text">
+             <string>out</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QTextEdit" name="textEdit_sm2_out"/>
+          </item>
+         </layout>
+        </item>
+        <item row="6" column="0">
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>495</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="6" column="1">
+         <layout class="QGridLayout" name="gridLayout_41">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_sm2_gen">
+            <property name="text">
+             <string>生成SM2</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_sm2_enc">
+            <property name="text">
+             <string>公钥加密</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pushButton_sm2_dec">
+            <property name="text">
+             <string>私钥解密</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="pushButton_sm2_verify">
+            <property name="text">
+             <string> 公钥验签</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButton_sm2_sign">
+            <property name="text">
+             <string>私钥签名</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
         <string>HASH</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_17">
+        <item row="0" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_18">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string> in</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QTextEdit" name="textEdit_hash_in"/>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>out</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QTextEdit" name="textEdit_hash_out"/>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>648</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_hash">
+          <property name="text">
+           <string>摘要</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" rowspan="2">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string> 算法</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QRadioButton" name="radioButton_md5">
+             <property name="text">
+              <string>MD5</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sm3">
+             <property name="text">
+              <string>SM3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_iso">
+             <property name="text">
+              <string>ISO 10118-2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sha1">
+             <property name="text">
+              <string>SHA1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sha224">
+             <property name="text">
+              <string>SHA224</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sha256">
+             <property name="text">
+              <string>SHA256</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sha384">
+             <property name="text">
+              <string>SHA384</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_sha512">
+             <property name="text">
+              <string>SHA512</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">

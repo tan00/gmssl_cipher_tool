@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->radioButton_pkcs1->setChecked(true);
 
+    ui->radioButton_md5->setChecked(true);
+
     WaringLabel = new QLabel;
     PosLabel = new QLabel;
     SelLabel = new QLabel;
@@ -597,4 +599,164 @@ void MainWindow::on_pushButton_rsa_pkdec_clicked()
     }
     ui->textEdit_rsa_out->setText(out.toUpper());
 
+}
+///////////////////rsa  end///////////////////////
+
+
+
+
+///////////////////////hash /////////////////
+void MainWindow::on_pushButton_hash_clicked()
+{
+    QString in;
+    int alg = 0;
+    QString out;
+    int ret = 0;
+    in = ui->textEdit_hash_in->toPlainText();
+
+    if( ui->radioButton_md5->isChecked() )
+        alg = 1;
+    else if( ui->radioButton_sm3->isChecked() )
+         alg = 2;
+    else if( ui->radioButton_iso->isChecked() )
+         alg = 3;
+    else if( ui->radioButton_sha1->isChecked() )
+         alg = 4;
+    else if( ui->radioButton_sha224->isChecked() )
+         alg = 5;
+    else if( ui->radioButton_sha256->isChecked() )
+         alg = 6;
+    else if( ui->radioButton_sha384->isChecked() )
+         alg = 7;
+    else if( ui->radioButton_sha512->isChecked() )
+         alg = 8;
+
+    ret = OPENSSL_API::hash(in,alg,out);
+    if(ret<0){
+        WaringLabel->setText("message digest error");
+    }
+    ui->textEdit_hash_out->setText(out.toUpper());
+}
+///////////////////////hash end/////////////////
+
+
+
+//////////////////////sm2 //////////////////
+void MainWindow::on_pushButton_sm2_gen_clicked()
+{
+    QString d;
+    QString x;
+    QString y;
+    int ret = 0;
+    ret = OPENSSL_API::gensm2(x,y,d);
+    if( ret<0 ){
+        return ;
+    }
+    ui->lineEdit_x->setText(x);
+    ui->lineEdit_y->setText(y);
+    ui->lineEdit_d_2->setText(d);
+}
+
+
+
+void MainWindow::on_pushButton_sm2_enc_clicked()
+{
+    QString pkx;
+    QString pky;
+    QString in;
+    QString out;
+    int ret = 0;
+
+    pkx = ui->lineEdit_x->text();
+    pky = ui->lineEdit_y->text();
+    in = ui->textEdit_sm2_in->toPlainText();
+
+    ret = OPENSSL_API::sm2enc(pkx,pky ,in , out);
+    if(ret<0){
+        WaringLabel->setText("sm2 enc error");
+        return ;
+    }
+
+    ui->textEdit_sm2_out->setText(out.toUpper());
+}
+
+void MainWindow::on_pushButton_sm2_dec_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_sm2_sign_clicked()
+{
+    QString d;
+    QString data;
+    QString pkx;
+    QString pky;
+    QString uid;
+    QString hash;
+    QString sign;
+    int ret = -1;
+
+    pkx = ui->lineEdit_x->text();
+    pky = ui->lineEdit_y->text();
+    uid = ui->lineEdit_uid->text();
+    d   = ui->lineEdit_d_2->text();
+    data= ui->textEdit_sm2_in->toPlainText();
+
+    if( ui->checkBox_interHash->isChecked() ){
+        OPENSSL_API::sm3_hash(pkx,pky,uid,data,hash);
+    }
+    else{
+        if(data.length()!=64){
+            WaringLabel->setText("hash value should be 64 hex");
+            return ;
+        }
+        hash = data;
+    }
+
+    ret =  OPENSSL_API::sm2sign(d,hash,sign );
+    if(ret<=0){
+        WaringLabel->setText("sign failed");
+        return ;
+    }
+
+    ui->textEdit_sm2_out->setText( sign.toUpper() );
+    return ;
+
+}
+
+void MainWindow::on_pushButton_sm2_verify_clicked()
+{
+    QString pkx;
+    QString pky;
+    QString uid;
+    QString data;
+    QString sign;
+    QString hash;
+    int ret = -1;
+
+
+    pkx = ui->lineEdit_x->text();
+    pky = ui->lineEdit_y->text();
+    uid = ui->lineEdit_uid->text();
+    data = ui->textEdit_sm2_in->toPlainText();
+    sign = ui->textEdit_sm2_out->toPlainText();
+
+    if( ui->checkBox_interHash->isChecked() ){
+        OPENSSL_API::sm3_hash(pkx,pky,uid,data,hash);
+    }
+    else{
+        if(data.length()!=64){
+            WaringLabel->setText("hash value should be 64 hex");
+            return ;
+        }
+        hash = data;
+    }
+
+    ret = OPENSSL_API::sm2verify(pkx,pky,hash,sign);
+    if(ret<=0){
+        WaringLabel->setText("verify failed");
+        return ;
+    }
+    WaringLabel->setText("verify success");
+    return ;
 }

@@ -88,6 +88,21 @@ private slots:
 
     void on_pushButton_rsa_pkdec_clicked();
 
+
+
+    void on_pushButton_hash_clicked();
+
+
+    void on_pushButton_sm2_gen_clicked();
+
+    void on_pushButton_sm2_enc_clicked();
+
+    void on_pushButton_sm2_dec_clicked();
+
+    void on_pushButton_sm2_sign_clicked();
+
+    void on_pushButton_sm2_verify_clicked();
+
 private:
     Ui::MainWindow *ui;
     QLabel *WaringLabel;  //显示警告信息

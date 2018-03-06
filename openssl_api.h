@@ -26,6 +26,18 @@ public:
     static int rsa_vkenc(QString dervk, QString in, int padding,  QString& out);
     static int rsa_pkdec(QString derpk, QString in, int padding,  QString& out);
 
+    /*
+    alg 1:md5 2:sm3 3:ISO10118-2 4:sha1 5:sha224 6:sha256 7:sha384 8:sha512
+    */
+    static int hash(QString inHex, int alg, QString& out);
+
+    static int gensm2(QString& x, QString& y, QString& d);
+    static int sm2enc(QString px ,QString py  , QString in , QString& out);    
+    static int sm2dec(QString d ,QString in   , QString& out);
+
+    static int sm3_hash(QString px, QString py, QString uid, QString data, QString &hash);
+    static int sm2sign(QString d,QString hash , QString &sign);
+    static int sm2verify(QString px ,QString py , QString hash  , QString sign);
 };
 
 #endif // OPENSSL_API_H
