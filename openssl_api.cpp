@@ -765,6 +765,9 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     QByteArray byteout;
     QByteArray bytein;
     QByteArray bytetmp;
+    size_t outlen;
+
+    unsigned char *poutsaved = NULL;
 
      //获取ECC公钥结构
     int nid = NID_sm2p256v1;
@@ -798,10 +801,10 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
         goto end;
     }
 
-    size_t outlen;
+
     outlen = inHex.length()/2 + 128;
     out = (unsigned char*)OPENSSL_malloc(outlen);  
-    unsigned char *poutsaved = out;
+    poutsaved = out;
 
     bytein = QByteArray::fromHex(inHex.toUtf8());
 
@@ -815,7 +818,8 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     d2i_SM2CiphertextValue(&asn1decode,(const unsigned char**)&out,outlen);
     OPENSSL_free(poutsaved);
 
-    GMSSLST::SM2CiphertextValue_st * psm2 = (GMSSLST::SM2CiphertextValue_st*)asn1decode;
+    GMSSLST::SM2CiphertextValue_st * psm2;
+    psm2  = (GMSSLST::SM2CiphertextValue_st*)asn1decode;
 
     bytetmp.append(  (char*)psm2->ciphertext->data, psm2->ciphertext->length);
     bytetmp.append( (char*)psm2->hash->data ,psm2->hash->length);
@@ -1060,7 +1064,7 @@ end:
     BN_free(sig_s);
     EC_KEY_free(ec_key);
     EVP_PKEY_CTX_free(ctx);
-    ECDSA_SIG_free(sm2sig);
+    //ECDSA_SIG_free(sm2sig);
 
     return ret;
 }
