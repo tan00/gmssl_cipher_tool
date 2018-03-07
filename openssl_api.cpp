@@ -40,13 +40,14 @@ struct asn1_string_st {
 
 typedef unsigned char BYTE;
 
-#define PRINT_ERROR() \
+#define PRINT_ERROR \
+    {\
     BIO *__b = BIO_new(BIO_s_mem());\
     ERR_print_errors(__b);\
     char errmsg[1024] = {0};\
     BIO_read(__b, errmsg, BIO_ctrl_pending(__b) );\
-    QDebug::QDebug(errmsg);\
-    qDebug() << errmsg;
+    qDebug() << errmsg;\
+    }
 
 
 
@@ -839,9 +840,87 @@ end:
     return ret;
 }
 
-int OPENSSL_API::sm2dec(QString d, QString in, QString &out)
+int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 {
-    return 0;
+    if(d.isEmpty()  ||  inHex.isEmpty())
+    {
+        return 0;
+    }
+
+    int ret = -1;
+    EC_KEY *ec_key = NULL;
+
+    BIGNUM *bnd = BN_new();
+    EVP_PKEY *key = NULL;
+    EVP_PKEY_CTX *ctx = NULL;
+    unsigned char *out = NULL;
+    size_t outlen;
+
+    QByteArray bytein( QByteArray::fromHex(inHex.toUtf8()));
+    unsigned char *derin = NULL;
+    int derin_len = 0;
+
+     //获取ECC密钥结构
+    int nid = NID_sm2p256v1;
+    ec_key = EC_KEY_new_by_curve_name(nid);
+    if( 1 != EC_KEY_set_private_key(ec_key,bnd))
+    {
+        goto end;
+    }
+
+    //获取EVP密钥结构
+    key = EVP_PKEY_new();
+    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
+        goto end;
+    }
+
+
+
+    //转换输入的密文(c1+c2+c3)为der编码格式
+    int cipherlen;
+    cipherlen = bytein.length() - 96;
+
+    GMSSLST::SM2CiphertextValue_st *pCiphertextValue;
+    pCiphertextValue = (GMSSLST::SM2CiphertextValue_st *)SM2CiphertextValue_new();
+    BN_bin2bn((unsigned char*)bytein.data(), 32, pCiphertextValue->xCoordinate  );
+    BN_bin2bn((unsigned char*)bytein.data()+32, 32, pCiphertextValue->yCoordinate  );
+    ASN1_OCTET_STRING_set(pCiphertextValue->ciphertext,
+                          (unsigned char*)bytein.data()+64 ,cipherlen );
+    ASN1_OCTET_STRING_set(pCiphertextValue->hash,
+                          (unsigned char*)bytein.data()+64+cipherlen ,32 );
+
+    derin_len = i2d_SM2CiphertextValue( (SM2CiphertextValue*)pCiphertextValue, &derin );
+
+
+    //开始解密
+    out = (unsigned char*)OPENSSL_malloc( bytein.length() );
+    ctx = EVP_PKEY_CTX_new(key, NULL);
+
+
+
+    if (EVP_PKEY_decrypt_init(ctx) <= 0){
+        goto end;
+    }
+    ret = EVP_PKEY_decrypt(ctx, out, &outlen, derin , derin_len );
+    if ( ret<= 0)
+    {
+        PRINT_ERROR;
+        goto end;
+    }
+    outHex = QByteArray::fromHex( QByteArray::QByteArray((char*)out,outlen) );
+
+
+end:
+    OPENSSL_free(out);
+    OPENSSL_free(derin);
+
+    BN_free(bnd);
+    EC_KEY_free(ec_key);
+    EVP_PKEY_free(key);
+    EVP_PKEY_CTX_free(ctx);
+    SM2CiphertextValue_free((SM2CiphertextValue*)pCiphertextValue);
+
+    return ret;
 }
 
 int OPENSSL_API::sm3_hash(QString px, QString py, QString uid, QString data, QString &hash)
@@ -924,7 +1003,6 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     const BIGNUM *sig_r = NULL;
     const BIGNUM *sig_s = NULL;
 
-    EVP_PKEY *key = NULL;
     ECDSA_SIG *sm2sig = ECDSA_SIG_new();
 
 
@@ -948,11 +1026,13 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
 
     //签名
     der_sig_len = sizeof(der_sig);
-    if (!SM2_sign(NID_undef, digst, bytehash.length(), der_sig, (unsigned int *)&der_sig_len, ec_key))
+    if ( 1 != SM2_sign(NID_undef, digst, bytehash.length(), der_sig, (unsigned int *)&der_sig_len, ec_key))
     {
+        PRINT_ERROR;
         goto end;
     }
     ret = 1;
+
 
     //获取签名值
     psig = (char*)der_sig;
@@ -960,6 +1040,7 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     {
         goto end;
     }
+
     ECDSA_SIG_get0( sm2sig, &sig_r,  &sig_s);
 
     psig = BN_bn2hex((BIGNUM*)sig_r);
@@ -970,9 +1051,9 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     OPENSSL_free(psig);
 
 end:
-//    BN_free(bnd);
-//    EC_KEY_free(ec_key);
-//    ECDSA_SIG_free(sm2sig);
+    BN_free(bnd);
+    EC_KEY_free(ec_key);
+    ECDSA_SIG_free(sm2sig);
 
     return ret;
 }
@@ -993,8 +1074,7 @@ int OPENSSL_API::sm2verify(QString px ,QString py , QString hash  , QString sign
     BIGNUM *bnx = BN_new();
     BIGNUM *bny = BN_new();
 
-    EVP_PKEY_CTX *ctx = NULL;
-    EVP_PKEY *key = NULL;
+
     ECDSA_SIG *sm2sig = ECDSA_SIG_new();
     BIGNUM *sig_r = BN_new();
     BIGNUM *sig_s = BN_new();
@@ -1024,14 +1104,6 @@ int OPENSSL_API::sm2verify(QString px ,QString py , QString hash  , QString sign
         goto end;
     }
 
-
-    //获取EVP密钥结构
-    key = EVP_PKEY_new();
-    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
-        goto end;
-    }
-
-
     //获取hash值
     memcpy( digst,  bytehash.data() , bytehash.length());
 
@@ -1042,17 +1114,13 @@ int OPENSSL_API::sm2verify(QString px ,QString py , QString hash  , QString sign
     der_sig_len = i2d_ECDSA_SIG(sm2sig,&der_sig);
 
     //开始验证
-    ctx = EVP_PKEY_CTX_new(key, NULL);
-    if (EVP_PKEY_verify_init(ctx) <= 0){
-        goto end;
-    }
-
-    ret = EVP_PKEY_verify(ctx, der_sig, der_sig_len , digst , 32 );
+    ret = SM2_verify(0,  digst , 32,der_sig, der_sig_len, ec_key);
     if ( ret<= 0)
-    {
+    {        
         goto end;
     }
     ret = 1;
+
 
 end:
     OPENSSL_free(der_sig);
@@ -1060,11 +1128,8 @@ end:
     EC_POINT_free(point);
     BN_free(bnx);
     BN_free(bny);
-    BN_free(sig_r);
-    BN_free(sig_s);
     EC_KEY_free(ec_key);
-    EVP_PKEY_CTX_free(ctx);
-    //ECDSA_SIG_free(sm2sig);
+    ECDSA_SIG_free(sm2sig);
 
     return ret;
 }

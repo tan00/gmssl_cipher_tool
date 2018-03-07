@@ -398,6 +398,8 @@ void MainWindow::on_pushButton_save_clicked()
 
 void MainWindow::on_pushButton_load_clicked()
 {
+    WaringLabel->setText("");
+
     QByteArray bytet;
     QString path = QFileDialog::getOpenFileName(this,tr("Open File"),  ".",   tr("bin(*.bin);;*(*)"));
     if(!path.isEmpty()) {
@@ -466,6 +468,7 @@ void MainWindow::on_textEdit_char_out_selectionChanged()
 ///////////////////rsa  ///////////////////////
 void MainWindow::on_pushButton_rsa_gen_clicked()
 {
+    WaringLabel->setText("");
     QString bits = ui->lineEdit_bits->text();
     QString e = ui->lineEdit_e->text();
 
@@ -482,6 +485,7 @@ void MainWindow::on_pushButton_rsa_gen_clicked()
 
 void MainWindow::on_pushButton_rsa_pkenc_clicked()
 {
+    WaringLabel->setText("");
     QString derpk;
     QString in;
     QString out;
@@ -512,6 +516,7 @@ void MainWindow::on_pushButton_rsa_pkenc_clicked()
 
 void MainWindow::on_pushButton_rsa_vkdec_clicked()
 {
+    WaringLabel->setText("");
     QString dervk;
     QString in;
     QString out;
@@ -543,6 +548,7 @@ void MainWindow::on_pushButton_rsa_vkdec_clicked()
 
 void MainWindow::on_pushButton_rsa_vkenc_clicked()
 {
+    WaringLabel->setText("");
     QString dervk;
     QString in;
     QString out;
@@ -573,6 +579,7 @@ void MainWindow::on_pushButton_rsa_vkenc_clicked()
 
 void MainWindow::on_pushButton_rsa_pkdec_clicked()
 {
+    WaringLabel->setText("");
     QString derpk;
     QString in;
     QString out;
@@ -608,6 +615,7 @@ void MainWindow::on_pushButton_rsa_pkdec_clicked()
 ///////////////////////hash /////////////////
 void MainWindow::on_pushButton_hash_clicked()
 {
+    WaringLabel->setText("");
     QString in;
     int alg = 0;
     QString out;
@@ -644,6 +652,7 @@ void MainWindow::on_pushButton_hash_clicked()
 //////////////////////sm2 //////////////////
 void MainWindow::on_pushButton_sm2_gen_clicked()
 {
+    WaringLabel->setText("");
     QString d;
     QString x;
     QString y;
@@ -661,6 +670,7 @@ void MainWindow::on_pushButton_sm2_gen_clicked()
 
 void MainWindow::on_pushButton_sm2_enc_clicked()
 {
+    WaringLabel->setText("");
     QString pkx;
     QString pky;
     QString in;
@@ -682,11 +692,28 @@ void MainWindow::on_pushButton_sm2_enc_clicked()
 
 void MainWindow::on_pushButton_sm2_dec_clicked()
 {
+    WaringLabel->setText("");
 
+    QString d;
+    QString in;
+    QString out;
+    int ret = 0;
+
+    d = ui->lineEdit_d_2->text();
+    in = ui->textEdit_sm2_in->toPlainText();
+
+    ret = OPENSSL_API::sm2dec(d , in , out);
+    if(ret<0){
+        WaringLabel->setText("sm2 dec error");
+        return ;
+    }
+
+    ui->textEdit_sm2_out->setText(out.toUpper());
 }
 
 void MainWindow::on_pushButton_sm2_sign_clicked()
 {
+    WaringLabel->setText("");
     QString d;
     QString data;
     QString pkx;
@@ -702,10 +729,12 @@ void MainWindow::on_pushButton_sm2_sign_clicked()
     d   = ui->lineEdit_d_2->text();
     data= ui->textEdit_sm2_in->toPlainText();
 
-    if( ui->checkBox_interHash->isChecked() ){
+    if( ui->checkBox_interHash->isChecked() )
+    {
         OPENSSL_API::sm3_hash(pkx,pky,uid,data,hash);
     }
-    else{
+    else
+    {
         if(data.length()!=64){
             WaringLabel->setText("hash value should be 64 hex");
             return ;
@@ -726,6 +755,7 @@ void MainWindow::on_pushButton_sm2_sign_clicked()
 
 void MainWindow::on_pushButton_sm2_verify_clicked()
 {
+    WaringLabel->setText("");
     QString pkx;
     QString pky;
     QString uid;
