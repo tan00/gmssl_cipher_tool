@@ -872,8 +872,20 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     QByteArray bytein( QByteArray::fromHex(inHex.toUtf8()));
     unsigned char *derin = NULL;
     int derin_len = 0;
-    QByteArray byteout;
 
+     //获取ECC密钥结构
+    int nid = NID_sm2p256v1;
+    ec_key = EC_KEY_new_by_curve_name(nid);
+    if( 1 != EC_KEY_set_private_key(ec_key,bnd))
+    {
+        goto end;
+    }
+
+    //获取EVP密钥结构
+    key = EVP_PKEY_new();
+    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
+        goto end;
+    }    
 
     //转换输入的密文(c1+c2+c3)为der编码格式
     int cipherlen;
@@ -891,6 +903,8 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     derin_len = i2d_SM2CiphertextValue( (SM2CiphertextValue*)pCiphertextValue, &derin );
 
     out = (unsigned char*)OPENSSL_malloc( bytein.length() );
+    outlen = bytein.length();
+    ctx = EVP_PKEY_CTX_new(key, NULL);
 
      //获取ECC密钥结构
     int nid = NID_sm2p256v1;

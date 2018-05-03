@@ -34,7 +34,7 @@ public:
     static int gensm2(QString& x, QString& y, QString& d);
     static int sm2enc(QString px ,QString py  , QString in , QString& out);
 
-    //私钥解密失败 公钥验签失败
+    //私钥解密失败 私钥签名返回成功 但结果错误
     static int sm2dec(QString d ,QString in   , QString& out);
 
     static int sm3_hash(QString px, QString py, QString uid, QString data, QString &hash);

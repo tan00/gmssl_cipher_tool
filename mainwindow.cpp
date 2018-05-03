@@ -341,7 +341,7 @@ void MainWindow::on_pushButton_trim_clicked()
     if( trimStr.isEmpty()){
 
         for(int i =0;i<in.length();i++){
-            if(in.at(i).isSpace()){
+            if( in.at(i).isSpace() || in.at(i).toLatin1()=='\n'){
                 in.remove(i,1);
             }
         }
