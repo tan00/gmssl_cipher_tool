@@ -872,9 +872,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     key = EVP_PKEY_new();
     if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
         goto end;
-    }
-
-
+    }    
 
     //转换输入的密文(c1+c2+c3)为der编码格式
     int cipherlen;
@@ -894,6 +892,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 
     //开始解密
     out = (unsigned char*)OPENSSL_malloc( bytein.length() );
+    outlen = bytein.length();
     ctx = EVP_PKEY_CTX_new(key, NULL);
 
 
