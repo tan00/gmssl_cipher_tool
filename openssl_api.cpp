@@ -39,6 +39,8 @@ struct asn1_string_st {
 }
 
 typedef unsigned char BYTE;
+#define SM2RAWALG    //use sm2 alg directly  , not by EVP*
+
 
 #define PRINT_ERROR \
     {\
@@ -790,31 +792,42 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
         goto end;
     }
 
-    //获取EVP密钥结构
-    key = EVP_PKEY_new(); 
-    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
-        goto end;
-    }
-
-    ctx = EVP_PKEY_CTX_new(key, NULL); 
-
-    if (EVP_PKEY_encrypt_init(ctx) <= 0){
-        goto end;
-    }
-
 
     outlen = inHex.length()/2 + 128;
-    out = (unsigned char*)OPENSSL_malloc(outlen);  
+    out = (unsigned char*)OPENSSL_malloc(outlen);
     poutsaved = out;
 
     bytein = QByteArray::fromHex(inHex.toUtf8());
 
-    //加密结果有ANS1填充
+
+    //获取EVP密钥结构
+
+#ifndef SM2RAWALG
+    key = EVP_PKEY_new();
+    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
+        goto end;
+    }
+    ctx = EVP_PKEY_CTX_new(key, NULL);
+
+    if (EVP_PKEY_encrypt_init(ctx) <= 0){
+        goto end;
+    }
     ret = EVP_PKEY_encrypt(ctx, out, &outlen, (unsigned char*)bytein.data() , bytein.length() );
     if ( ret<= 0)
     {
+        PRINT_ERROR;
         goto end;
     }
+#endif
+
+#ifdef SM2RAWALG
+    ret = SM2_encrypt( 1126 , (unsigned char*)bytein.data() , bytein.length() , out, &outlen ,ec_key );
+    if ( ret<= 0)
+    {
+        PRINT_ERROR;
+        goto end;
+    }
+#endif
 
     d2i_SM2CiphertextValue(&asn1decode,(const unsigned char**)&out,outlen);
     OPENSSL_free(poutsaved);
@@ -859,21 +872,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     QByteArray bytein( QByteArray::fromHex(inHex.toUtf8()));
     unsigned char *derin = NULL;
     int derin_len = 0;
-
-     //获取ECC密钥结构
-    int nid = NID_sm2p256v1;
-    ec_key = EC_KEY_new_by_curve_name(nid);
-    if( 1 != EC_KEY_set_private_key(ec_key,bnd))
-    {
-        goto end;
-    }
-
-    //获取EVP密钥结构
-    key = EVP_PKEY_new();
-    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
-        goto end;
-    }
-
+    QByteArray byteout;
 
 
     //转换输入的密文(c1+c2+c3)为der编码格式
@@ -891,13 +890,24 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 
     derin_len = i2d_SM2CiphertextValue( (SM2CiphertextValue*)pCiphertextValue, &derin );
 
-
-    //开始解密
     out = (unsigned char*)OPENSSL_malloc( bytein.length() );
+
+     //获取ECC密钥结构
+    int nid = NID_sm2p256v1;
+    ec_key = EC_KEY_new_by_curve_name(nid);
+    if( 1 != EC_KEY_set_private_key(ec_key,bnd))
+    {
+        goto end;
+    }
+
+
+#ifdef SM2RAWALG
+    //获取EVP密钥结构
+    key = EVP_PKEY_new();
+    if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
+        goto end;
+    }
     ctx = EVP_PKEY_CTX_new(key, NULL);
-
-
-
     if (EVP_PKEY_decrypt_init(ctx) <= 0){
         goto end;
     }
@@ -907,8 +917,19 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
         PRINT_ERROR;
         goto end;
     }
-    outHex = QByteArray::fromHex( QByteArray::QByteArray((char*)out,outlen) );
+#endif
 
+#ifndef SM2RAWALG
+    ret = SM2_decrypt( 1126 , derin , derin_len , out , &outlen , ec_key);
+    if ( ret<= 0)
+    {
+        PRINT_ERROR;
+        goto end;
+    }
+#endif
+
+
+    outHex = QByteArray::fromHex( byteout.append((char*)out,outlen) );
 
 end:
     OPENSSL_free(out);
