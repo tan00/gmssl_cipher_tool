@@ -108,7 +108,7 @@ public:
     static void setSystemDateTime(QString year, QString month, QString day, QString hour, QString min, QString sec)
     {
 #ifdef Q_OS_WIN
-        QProcess p(0);
+        QProcess p(nullptr);
         p.start("cmd");
         p.waitForStarted();
         p.write(QString("date %1-%2-%3\n").arg(year).arg(month).arg(day).toLatin1());
@@ -126,19 +126,6 @@ public:
         system(cmd.toLatin1());
         system("hwclock -w");
 #endif
-    }
-
-    static QString byteArrayToHexStr(QByteArray data)
-    {
-        QString temp = "";
-        QString hex = data.toHex();
-
-        for (int i = 0; i < hex.length(); i = i + 2) {
-            //temp += hex.mid(i, 2) + " ";
-            temp += hex.mid(i, 2);
-        }
-
-        return temp.trimmed().toUpper();
     }
 
     static QString byteArrayToAsciiStr(QByteArray data)
@@ -598,7 +585,7 @@ public:
     static int addHeadLen(void* data, int datalen, int headLen = 2)
     {
         const int MAXLEN = 4;
-        if (NULL == data || headLen<0 || headLen>MAXLEN || datalen<0)
+        if (nullptr == data || headLen<0 || headLen>MAXLEN || datalen<0)
             return -1;
 
         char* pdata = (char*)data;

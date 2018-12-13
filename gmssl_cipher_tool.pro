@@ -24,16 +24,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+CONFIG += c++11
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    openssl_api.cpp
+        openssl_api.cpp
 
 HEADERS += \
         mainwindow.h \
-    openssl_api.h \
-    myhelper.h
+        openssl_api.h \
+        myhelper.h
 
 FORMS += \
         mainwindow.ui
@@ -49,18 +50,16 @@ FORMS += \
 #else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
 #else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
 
-unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib64/ -lcrypto
+unix:!macx: LIBS += -L$$PWD/lib64/ -lcrypto
 
-INCLUDEPATH += $$PWD/../../../../../usr/local/include/openssl
-DEPENDPATH += $$PWD/../../../../../usr/local/include/openssl
-
-
+INCLUDEPATH += $$PWD/include/openssl
+DEPENDPATH += $$PWD/include/openssl
 
 
-win32: LIBS += -L$$PWD/../../../App/Develop/gmssl/lib/ -llibcrypto
+win32: LIBS += -L$$PWD/library -llibcrypto
 
-INCLUDEPATH += $$PWD/../../../App/Develop/gmssl/include
-DEPENDPATH += $$PWD/../../../App/Develop/gmssl/include
+INCLUDEPATH += $$PWD/include
+DEPENDPATH += $$PWD/include
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/liblibcrypto.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/library/libcrypto.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/library/liblibcrypto.a

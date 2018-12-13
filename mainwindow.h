@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -14,28 +14,17 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
+    void edit_selectionChanged();
+    void line_cursorPositionChanged(int arg1, int arg2);
+    void text_cursorPositionChanged();
+
     void on_pushButton_enc_clicked();
+
     void on_pushButton_dec_clicked();
-
-
-    void on_textEdit_in_cursorPositionChanged();
-    void on_textEdit_in_selectionChanged();
-
-    void on_textEdit_out_cursorPositionChanged();
-    void on_textEdit_out_selectionChanged();
-
-
-    void on_lineEdit_key_cursorPositionChanged(int arg1, int arg2);
-
-    void on_lineEdit_key_selectionChanged();
-
-    void on_lineEdit_iv_cursorPositionChanged(int arg1, int arg2);
-
-    void on_lineEdit_iv_selectionChanged();
 
     void on_pushButton_asctohex_clicked();
 
@@ -63,21 +52,6 @@ private slots:
 
 
 
-    void on_textEdit_char_in_cursorPositionChanged();
-
-    void on_textEdit_char_in_selectionChanged();
-
-    void on_textEdit_char_in_2_cursorPositionChanged();
-
-    void on_textEdit_char_in_2_selectionChanged();
-
-    void on_textEdit_char_out_cursorPositionChanged();
-
-    void on_textEdit_char_out_selectionChanged();
-
-    void on_tabWidget_tabBarClicked(int index);
-
-
     void on_pushButton_rsa_gen_clicked();
 
     void on_pushButton_rsa_pkenc_clicked();
@@ -93,21 +67,21 @@ private slots:
     void on_pushButton_hash_clicked();
 
 
-    void on_pushButton_sm2_gen_clicked();
+    void on_btn_SM2_GenPair_clicked();
 
-    void on_pushButton_sm2_enc_clicked();
+    void on_btn_SM2_Encrypt_clicked();
 
-    void on_pushButton_sm2_dec_clicked();
+    void on_btn_SM2_Decrypt_clicked();
 
-    void on_pushButton_sm2_sign_clicked();
+    void on_btn_SM2_sign_clicked();
 
-    void on_pushButton_sm2_verify_clicked();
+    void on_btn_SM2_verify_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QLabel *WaringLabel;  //显示警告信息
-    QLabel *PosLabel; //显示pos:  光标位置
-    QLabel *SelLabel; //显示Sel:  选取字符数
+    QLabel *m_labelPos;
+    QLabel *m_labelSel;
+    QLabel *m_labelMsg;
 };
 
 #endif // MAINWINDOW_H
