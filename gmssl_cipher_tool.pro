@@ -38,29 +38,12 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../App/Develop/gmssl/lib/ -llibcrypto
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../App/Develop/gmssl/lib/ -llibcrypto
 
-#INCLUDEPATH += $$PWD/../../../App/Develop/gmssl/include
-#DEPENDPATH += $$PWD/../../../App/Develop/gmssl/include
+INCLUDEPATH += $$PWD/include
+DEPENDPATH += $$PWD/include
 
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/liblibcrypto.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/liblibcryptod.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
+unix:!macx: LIBS += -L$$PWD/lib -lcrypto
+win32: LIBS += -L$$PWD/lib/     -llibcrypto
 
-unix:!macx: LIBS += -L$$PWD/../../../../../usr/local/lib64/ -lcrypto
-
-INCLUDEPATH += $$PWD/../../../../../usr/local/include/openssl
-DEPENDPATH += $$PWD/../../../../../usr/local/include/openssl
-
-
-
-
-win32: LIBS += -L$$PWD/../../../App/Develop/gmssl/lib/ -llibcrypto
-
-INCLUDEPATH += $$PWD/../../../App/Develop/gmssl/include
-DEPENDPATH += $$PWD/../../../App/Develop/gmssl/include
-
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/liblibcrypto.a
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.a

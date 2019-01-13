@@ -81,6 +81,7 @@ void MainWindow::on_pushButton_enc_clicked()
     }
 
     //选择加密算法和加密模式
+
     int alg,mode;
     if( ui->radioButton_des->isChecked() ){
         alg = DES;
@@ -142,6 +143,8 @@ void MainWindow::on_pushButton_dec_clicked()
     }
 
     //选择解密算法和解密模式
+
+
     int alg,mode;
     if( ui->radioButton_des->isChecked() ){
         alg = DES;

@@ -1,4 +1,4 @@
-#include "openssl_api.h"
+﻿#include "openssl_api.h"
 #include "myhelper.h"
 #include <QByteArray>
 #include <openssl/evp.h>
@@ -874,8 +874,10 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     int derin_len = 0;
     QByteArray byteout;
 
+	//d
+	BN_hex2bn(&bnd, d.toStdString().c_str());
 
-    //转换输入的密文(c1+c2+c3)为der编码格式
+    //杞崲杈撳叆鐨勫瘑鏂?c1+c2+c3)涓篸er缂栫爜鏍煎紡
     int cipherlen;
     cipherlen = bytein.length() - 96;
 
@@ -901,7 +903,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     }
 
 
-#ifdef SM2RAWALG
+#ifndef SM2RAWALG
     //获取EVP密钥结构
     key = EVP_PKEY_new();
     if( 1 != EVP_PKEY_set1_EC_KEY(key,ec_key) ){
@@ -919,7 +921,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     }
 #endif
 
-#ifndef SM2RAWALG
+#ifdef SM2RAWALG
     ret = SM2_decrypt( 1126 , derin , derin_len , out , &outlen , ec_key);
     if ( ret<= 0)
     {
@@ -929,7 +931,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 #endif
 
 
-    outHex = QByteArray::fromHex( byteout.append((char*)out,outlen) );
+    outHex = byteout.append((char*)out,outlen).toHex() ;
 
 end:
     OPENSSL_free(out);
@@ -1024,7 +1026,7 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     const BIGNUM *sig_r = NULL;
     const BIGNUM *sig_s = NULL;
 
-    ECDSA_SIG *sm2sig = ECDSA_SIG_new();
+	ECDSA_SIG *sm2sig = NULL; /*ECDSA_SIG_new();*/
 
 
     unsigned char der_sig[256] = {0};
@@ -1032,6 +1034,9 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     unsigned char digst[256] = {0};
 
     QByteArray bytehash( QByteArray::fromHex(hash.toUtf8()));
+
+	//d
+	BN_hex2bn(&bnd, d.toStdString().c_str());
 
      //获取ECC密钥结构
     int nid = NID_sm2p256v1;
@@ -1056,7 +1061,8 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
 
 
     //获取签名值
-    psig = (char*)der_sig;
+	unsigned char *psig2 = der_sig;
+    psig = (char*)psig2;
     if (!(sm2sig = d2i_ECDSA_SIG(NULL, (const unsigned char**)&psig, der_sig_len)))
     {
         goto end;
