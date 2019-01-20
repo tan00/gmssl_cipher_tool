@@ -16,6 +16,7 @@ class OPENSSL_API
 {
 public:
     OPENSSL_API();
+    static void PrintGmsslVerion();
 
     static int enc(QString keyHex, QString ivHex, int alg, int mode, QString inHex, QString& outHex);
     static int dec(QString keyHex, QString ivHex, int alg , int mode ,QString inHex , QString& outHex);
@@ -32,14 +33,9 @@ public:
     static int hash(QString inHex, int alg, QString& out);
 
     static int gensm2(QString& x, QString& y, QString& d);
-    static int sm2enc(QString px ,QString py  , QString in , QString& out);
-
-    
+    static int sm2enc(QString px ,QString py  , QString in , QString& out);    
     static int sm2dec(QString d ,QString in   , QString& out);
-
     static int sm3_hash(QString px, QString py, QString uid, QString data, QString &hash);
-
-	// 私钥签名返回成功 但结果错误
     static int sm2sign(QString d,QString hash , QString &sign);
     static int sm2verify(QString px ,QString py , QString hash  , QString sign);
 };

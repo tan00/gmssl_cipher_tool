@@ -76,6 +76,9 @@ extern "C" {
 #define SM2_DEFAULT_ID_BITS			(SM2_DEFAULT_ID_LENGTH * 8)
 #define SM2_DEFAULT_ID_DIGEST_LENGTH		SM3_DIGEST_LENGTH
 
+
+int EC_KEY_is_sm2p256v1(const EC_KEY *ec_key);
+
 /* compute identity digest Z */
 int SM2_compute_id_digest(const EVP_MD *md, const char *id, size_t idlen,
 	unsigned char *out, size_t *outlen, EC_KEY *ec_key);
@@ -106,12 +109,15 @@ int SM2_verify(int type, const unsigned char *dgst, int dgstlen,
 
 /* SM2 Public Key Encryption */
 
-#define SM2_MIN_PLAINTEXT_LENGTH	0
-#define SM2_MAX_PLAINTEXT_LENGTH	1024
-#define SM2_CIPHERTEXT_LENGTH(len)	((len)+256)
-
 typedef struct SM2CiphertextValue_st SM2CiphertextValue;
 DECLARE_ASN1_FUNCTIONS(SM2CiphertextValue)
+
+int i2d_SM2CiphertextValue_bio(BIO *bp, SM2CiphertextValue *a);
+SM2CiphertextValue *d2i_SM2CiphertextValue_bio(BIO *bp, SM2CiphertextValue **a);
+#ifndef OPENSSL_NO_STDIO
+SM2CiphertextValue *d2i_SM2CiphertextValue_fp(FILE *fp, SM2CiphertextValue **a);
+int i2d_SM2CiphertextValue_fp(FILE *fp, SM2CiphertextValue *a);
+#endif
 
 int i2o_SM2CiphertextValue(const EC_GROUP *group, const SM2CiphertextValue *cv,
 	unsigned char **pout);
@@ -130,8 +136,6 @@ int SM2_decrypt(int type, const unsigned char *in, size_t inlen,
 	SM2_encrypt(NID_sm3,in,inlen,out,outlen,ec_key)
 #define SM2_decrypt_with_recommended(in,inlen,out,outlen,ec_key) \
 	SM2_decrypt(NID_sm3,in,inlen,out,outlen,ec_key)
-
-int SM2CiphertextValue_size(const EC_GROUP *group, int inlen);
 
 /* SM2 Key Exchange */
 
@@ -255,6 +259,8 @@ int ERR_load_SM2_strings(void);
 /* Function codes. */
 # define SM2_F_I2O_SM2CIPHERTEXTVALUE                     107
 # define SM2_F_O2I_SM2CIPHERTEXTVALUE                     108
+# define SM2_F_SM2CIPHERTEXTVALUE_SIZE                    109
+# define SM2_F_SM2_CIPHERTEXT_SIZE                        110
 # define SM2_F_SM2_DECRYPT                                100
 # define SM2_F_SM2_DO_DECRYPT                             101
 # define SM2_F_SM2_DO_ENCRYPT                             102
@@ -277,10 +283,11 @@ int ERR_load_SM2_strings(void);
 # define SM2_R_KDF_FAILURE                                109
 # define SM2_R_MISSING_PARAMETERS                         111
 # define SM2_R_NEED_NEW_SETUP_VALUES                      112
+# define SM2_R_PLAINTEXT_TOO_LONG                         114
 # define SM2_R_RANDOM_NUMBER_GENERATION_FAILED            113
 
-# ifdef  __cplusplus
+#  ifdef  __cplusplus
 }
+#  endif
 # endif
-#endif
 #endif

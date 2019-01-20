@@ -103,6 +103,9 @@ private slots:
 
     void on_pushButton_sm2_verify_clicked();
 
+
+
+
 private:
     Ui::MainWindow *ui;
     QLabel *WaringLabel;  //显示警告信息

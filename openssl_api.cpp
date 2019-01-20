@@ -13,6 +13,7 @@
 #include <openssl/sm3.h>
 #include <openssl/sm2.h>
 #include <openssl/objects.h>
+#include <openssl/is_gmssl.h>
 
 #include <QDebug>
 
@@ -57,6 +58,12 @@ typedef unsigned char BYTE;
 OPENSSL_API::OPENSSL_API()
 {
 
+}
+
+void OPENSSL_API::PrintGmsslVerion()
+{
+     qDebug("version: %s\n", OpenSSL_version(0));
+    //printf("version: %s\n", OpenSSL_version(0))
 }
 
 static const EVP_CIPHER *  getalg(int alg, int mode , int keylen)
@@ -207,6 +214,7 @@ static const EVP_CIPHER *  getalg(int alg, int mode , int keylen)
 
 int OPENSSL_API::enc(QString keyHex, QString ivHex, int alg, int mode, QString inHex, QString& outHex)
 {
+    PrintGmsslVerion();
 
     QByteArray QbyteKey  = myHelper::hexStrToByteArray(keyHex);
     QByteArray QbyteIV  =  myHelper::hexStrToByteArray(ivHex);
@@ -701,6 +709,7 @@ int OPENSSL_API::gensm2(QString &xp, QString &yp, QString &dp)
 
     ret = EC_KEY_generate_key(ec_key);
     if(ret!=1){
+        PRINT_ERROR;
         EC_GROUP_free(group);
         EC_KEY_free(ec_key);
         return -1;
@@ -795,6 +804,7 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
 
     outlen = inHex.length()/2 + 128;
     out = (unsigned char*)OPENSSL_malloc(outlen);
+
     poutsaved = out;
 
     bytein = QByteArray::fromHex(inHex.toUtf8());
@@ -821,7 +831,7 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
 #endif
 
 #ifdef SM2RAWALG
-    ret = SM2_encrypt( 1126 , (unsigned char*)bytein.data() , bytein.length() , out, &outlen ,ec_key );
+    ret = SM2_encrypt( NID_sm3 , (unsigned char*)bytein.data() , bytein.length() , out, &outlen ,ec_key );
     if ( ret<= 0)
     {
         PRINT_ERROR;
@@ -877,7 +887,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 	//d
 	BN_hex2bn(&bnd, d.toStdString().c_str());
 
-    //杞崲杈撳叆鐨勫瘑鏂?c1+c2+c3)涓篸er缂栫爜鏍煎紡
+
     int cipherlen;
     cipherlen = bytein.length() - 96;
 
@@ -922,7 +932,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 #endif
 
 #ifdef SM2RAWALG
-    ret = SM2_decrypt( 1126 , derin , derin_len , out , &outlen , ec_key);
+    ret = SM2_decrypt( NID_sm3 , derin , derin_len , out , &outlen , ec_key);
     if ( ret<= 0)
     {
         PRINT_ERROR;
