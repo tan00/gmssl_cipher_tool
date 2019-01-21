@@ -42,7 +42,7 @@ FORMS += \
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
 
-unix:!macx: LIBS += -L$$PWD/lib -lcrypto
+unix:!macx: LIBS += -L$$PWD/lib -lcrypto -ldl
 win32: LIBS += -L$$PWD/lib/     -llibcrypto
 
 #win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../../App/Develop/gmssl/lib/libcrypto.lib

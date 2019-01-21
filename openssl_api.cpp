@@ -771,7 +771,7 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     BIGNUM *bny = NULL;
 
     EVP_PKEY_CTX *ctx = NULL;
-    EVP_PKEY *key = NULL;
+    //EVP_PKEY *key = NULL;
     unsigned char *out;
     SM2CiphertextValue* asn1decode = NULL;
     QByteArray byteout;
@@ -1071,7 +1071,8 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
 
 
     //获取签名值
-	unsigned char *psig2 = der_sig;
+    unsigned char *psig2 ;
+    psig2 = der_sig;
     psig = (char*)psig2;
     if (!(sm2sig = d2i_ECDSA_SIG(NULL, (const unsigned char**)&psig, der_sig_len)))
     {
