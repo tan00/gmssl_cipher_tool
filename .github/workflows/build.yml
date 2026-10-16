@@ -84,5 +84,7 @@ jobs:
             exit 1
           fi
           # offscreen冒烟: 程序正常进入事件循环会被timeout杀掉(124), 加载失败则立即非0
-          QT_QPA_PLATFORM=offscreen timeout 5 ./gmssl_cipher_tool
-          test $? -eq 124
+          # 注意bash -e会把124当失败, 需先捕获返回码
+          rc=0
+          QT_QPA_PLATFORM=offscreen timeout 5 ./gmssl_cipher_tool || rc=$?
+          test $rc -eq 124
