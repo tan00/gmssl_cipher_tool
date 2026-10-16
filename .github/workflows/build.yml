@@ -1,0 +1,93 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    name: Windows x64 (MSVC + Qt 5.15)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt 5.15.2
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          arch: 'win64_msvc2019_64'
+          cache: true
+
+      - name: Configure (qmake)
+        run: qmake gmssl_cipher_tool.pro CONFIG+=release CONFIG-=debug_and_release
+        env:
+          CL: /utf-8
+
+      - name: Build (nmake)
+        run: nmake
+        env:
+          CL: /utf-8
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Recurse -Filter gmssl_cipher_tool.exe | Select-Object -First 1
+          if (-not $exe) { throw 'gmssl_cipher_tool.exe not found' }
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item $exe.FullName dist/
+          windeployqt --release --compiler-runtime dist/gmssl_cipher_tool.exe
+          Copy-Item lib/libcrypto-1_1-x64.dll dist/
+          Get-ChildItem dist/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gmssl_cipher_tool-windows-x64
+          path: dist/
+          if-no-files-found: error
+
+  build-linux:
+    name: Linux (Qt5 + GmSSL 2.x)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt5
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qtbase5-dev qt5-qmake g++ make
+
+      # apt 里没有 GmSSL 2.x(3.x API 不兼容), 从 v2 分支源码编译
+      - name: Build GmSSL 2.x
+        run: |
+          git clone --depth 1 --branch GmSSL-v2 https://github.com/guanzhi/GmSSL.git /tmp/GmSSL
+          pushd /tmp/GmSSL
+          ./config --prefix=/usr/local
+          make -j"$(nproc)"
+          sudo make install
+          sudo ldconfig
+          popd
+
+      - name: Configure (qmake)
+        run: qmake gmssl_cipher_tool.pro QMAKE_LIBDIR+=/usr/local/lib
+
+      - name: Build (make)
+        run: make -j"$(nproc)"
+
+      - name: Check binary
+        run: |
+          ls -la gmssl_cipher_tool
+          ldd gmssl_cipher_tool | grep -i crypto

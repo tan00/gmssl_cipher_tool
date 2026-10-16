@@ -725,7 +725,7 @@ int OPENSSL_API::gensm2(QString &xp, QString &yp, QString &dp)
 
     char *pHexPoint = NULL;
     pHexPoint = EC_POINT_point2hex(group,ecpoint,POINT_CONVERSION_UNCOMPRESSED,NULL);
-    if( !ecpoint ){
+    if( !pHexPoint ){
         EC_GROUP_free(group);
         EC_KEY_free(ec_key);
         return -1;
@@ -839,8 +839,11 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     }
 #endif
 
-    d2i_SM2CiphertextValue(&asn1decode,(const unsigned char**)&out,outlen);
-    OPENSSL_free(poutsaved);
+    if( !d2i_SM2CiphertextValue(&asn1decode,(const unsigned char**)&out,outlen) )
+    {
+        ret = -1;
+        goto end;
+    }
 
     GMSSLST::SM2CiphertextValue_st * psm2;
     psm2  = (GMSSLST::SM2CiphertextValue_st*)asn1decode;
@@ -848,8 +851,11 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     bytetmp.append(  (char*)psm2->ciphertext->data, psm2->ciphertext->length);
     bytetmp.append( (char*)psm2->hash->data ,psm2->hash->length);
 
-    outHex.append(BN_bn2hex( psm2->xCoordinate ));
-    outHex.append(BN_bn2hex( psm2->yCoordinate ));
+    //x/y必须定长32字节: sm2dec按定长解析, BN_bn2hex不补前导零会错位
+    BYTE xy[64] = {0};
+    BN_bn2binpad( psm2->xCoordinate, xy, 32 );
+    BN_bn2binpad( psm2->yCoordinate, xy+32, 32 );
+    outHex.append( QByteArray((char*)xy, 64).toHex() );
     outHex.append( bytetmp.toHex() );
 
 end:
@@ -860,6 +866,7 @@ end:
     EC_KEY_free(ec_key);
     EVP_PKEY_CTX_free(ctx);
     SM2CiphertextValue_free(asn1decode);
+    OPENSSL_free(poutsaved);
     return ret;
 }
 
@@ -877,7 +884,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     EVP_PKEY *key = NULL;
     EVP_PKEY_CTX *ctx = NULL;
     unsigned char *out = NULL;
-    size_t outlen;
+    size_t outlen = 0;
 
     QByteArray bytein( QByteArray::fromHex(inHex.toUtf8()));
     unsigned char *derin = NULL;
@@ -890,8 +897,11 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
 
     int cipherlen;
     cipherlen = bytein.length() - 96;
+    if( cipherlen <= 0 ){
+        goto end;
+    }
 
-    GMSSLST::SM2CiphertextValue_st *pCiphertextValue;
+    GMSSLST::SM2CiphertextValue_st *pCiphertextValue = NULL;
     pCiphertextValue = (GMSSLST::SM2CiphertextValue_st *)SM2CiphertextValue_new();
     BN_bin2bn((unsigned char*)bytein.data(), 32, pCiphertextValue->xCoordinate  );
     BN_bin2bn((unsigned char*)bytein.data()+32, 32, pCiphertextValue->yCoordinate  );
@@ -903,6 +913,7 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     derin_len = i2d_SM2CiphertextValue( (SM2CiphertextValue*)pCiphertextValue, &derin );
 
     out = (unsigned char*)OPENSSL_malloc( bytein.length() );
+    outlen = bytein.length();
 
      //获取ECC密钥结构
     int nid = NID_sm2p256v1;
@@ -1081,12 +1092,11 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
 
     ECDSA_SIG_get0( sm2sig, &sig_r,  &sig_s);
 
-    psig = BN_bn2hex((BIGNUM*)sig_r);
-    sign.append(psig);
-    OPENSSL_free(psig);
-    psig = BN_bn2hex((BIGNUM*)sig_s);
-    sign.append(psig);
-    OPENSSL_free(psig);
+    //r/s必须定长32字节: sm2verify按总半长拆分, BN_bn2hex变长拼接会错位
+    BYTE rs[64] = {0};
+    BN_bn2binpad( sig_r, rs, 32 );
+    BN_bn2binpad( sig_s, rs+32, 32 );
+    sign.append( QByteArray((char*)rs, 64).toHex() );
 
 end:
     BN_free(bnd);

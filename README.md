@@ -1,3 +1,5 @@
+[![Build](https://github.com/tan00/gmssl_cipher_tool/actions/workflows/build.yml/badge.svg)](https://github.com/tan00/gmssl_cipher_tool/actions/workflows/build.yml)
+
 本软件是一个gui密码算法工具. 
 基于[gmssl](https://github.com/guanzhi/GmSSL) , 支持sm2/3/4和des/aes/rsa算法. 
 
