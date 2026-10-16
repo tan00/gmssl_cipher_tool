@@ -59,7 +59,7 @@ jobs:
           if-no-files-found: error
 
   build-linux:
-    name: Linux (Qt5 + GmSSL 2.x)
+    name: Linux (Qt5 + lib/linux静态库)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -70,19 +70,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y qtbase5-dev qt5-qmake g++ make
 
-      # apt 里没有 GmSSL 2.x(3.x API 不兼容), 从 v2 分支源码编译
-      - name: Build GmSSL 2.x
-        run: |
-          git clone --depth 1 --branch GmSSL-v2 https://github.com/guanzhi/GmSSL.git /tmp/GmSSL
-          pushd /tmp/GmSSL
-          ./config --prefix=/usr/local
-          make -j"$(nproc)"
-          sudo make install
-          sudo ldconfig
-          popd
-
       - name: Configure (qmake)
-        run: qmake gmssl_cipher_tool.pro QMAKE_LIBDIR+=/usr/local/lib
+        run: qmake gmssl_cipher_tool.pro
 
       - name: Build (make)
         run: make -j"$(nproc)"
@@ -90,4 +79,10 @@ jobs:
       - name: Check binary
         run: |
           ls -la gmssl_cipher_tool
-          ldd gmssl_cipher_tool | grep -i crypto
+          if ldd gmssl_cipher_tool | grep -q "not found"; then
+            ldd gmssl_cipher_tool | grep "not found"
+            exit 1
+          fi
+          # offscreen冒烟: 程序正常进入事件循环会被timeout杀掉(124), 加载失败则立即非0
+          QT_QPA_PLATFORM=offscreen timeout 5 ./gmssl_cipher_tool
+          test $? -eq 124

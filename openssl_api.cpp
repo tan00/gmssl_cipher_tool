@@ -781,6 +781,8 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
 
     unsigned char *poutsaved = NULL;
 
+    BYTE xy[64] = {0};
+
      //获取ECC公钥结构
     int nid = NID_sm2p256v1;
     group = EC_GROUP_new_by_curve_name(nid);
@@ -852,7 +854,6 @@ int OPENSSL_API::sm2enc(QString px ,QString py  , QString inHex, QString &outHex
     bytetmp.append( (char*)psm2->hash->data ,psm2->hash->length);
 
     //x/y必须定长32字节: sm2dec按定长解析, BN_bn2hex不补前导零会错位
-    BYTE xy[64] = {0};
     BN_bn2binpad( psm2->xCoordinate, xy, 32 );
     BN_bn2binpad( psm2->yCoordinate, xy+32, 32 );
     outHex.append( QByteArray((char*)xy, 64).toHex() );
@@ -886,6 +887,10 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     unsigned char *out = NULL;
     size_t outlen = 0;
 
+    //声明置前, 避免goto end跨越带初始化的声明(GCC拒绝, MSVC宽容)
+    int nid = NID_sm2p256v1;
+    GMSSLST::SM2CiphertextValue_st *pCiphertextValue = NULL;
+
     QByteArray bytein( QByteArray::fromHex(inHex.toUtf8()));
     unsigned char *derin = NULL;
     int derin_len = 0;
@@ -901,7 +906,6 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
         goto end;
     }
 
-    GMSSLST::SM2CiphertextValue_st *pCiphertextValue = NULL;
     pCiphertextValue = (GMSSLST::SM2CiphertextValue_st *)SM2CiphertextValue_new();
     BN_bin2bn((unsigned char*)bytein.data(), 32, pCiphertextValue->xCoordinate  );
     BN_bin2bn((unsigned char*)bytein.data()+32, 32, pCiphertextValue->yCoordinate  );
@@ -916,7 +920,6 @@ int OPENSSL_API::sm2dec(QString d, QString inHex, QString &outHex)
     outlen = bytein.length();
 
      //获取ECC密钥结构
-    int nid = NID_sm2p256v1;
     ec_key = EC_KEY_new_by_curve_name(nid);
     if( 1 != EC_KEY_set_private_key(ec_key,bnd))
     {
@@ -1049,6 +1052,8 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
 
 	ECDSA_SIG *sm2sig = NULL; /*ECDSA_SIG_new();*/
 
+    BYTE rs[64] = {0};
+
 
     unsigned char der_sig[256] = {0};
     int der_sig_len = 0;
@@ -1093,7 +1098,6 @@ int OPENSSL_API::sm2sign(QString d,QString hash , QString &sign)
     ECDSA_SIG_get0( sm2sig, &sig_r,  &sig_s);
 
     //r/s必须定长32字节: sm2verify按总半长拆分, BN_bn2hex变长拼接会错位
-    BYTE rs[64] = {0};
     BN_bn2binpad( sig_r, rs, 32 );
     BN_bn2binpad( sig_s, rs+32, 32 );
     sign.append( QByteArray((char*)rs, 64).toHex() );
